@@ -32,51 +32,48 @@ const Home = () => {
 
   useEffect(() => {
     if (!userData.id) return;
-    
+
     const findRole = async () => {
       setIsLoading(true);
       try {
         // console.log("Sending request to backend with data:", userData);
-        
+
         const result = await axios.post(
           "http://localhost:8080/api/findrole",
           userData
         );
-        
+
         // console.log("Role response:", result.data);
-        
+
         // SUCCESS CASE - User found in database
         if (result.data.role && result.data.role !== "none") {
           // console.log("User role found:", result.data.role);
           // Store the role in context/state/localStorage for later use
-          localStorage.setItem('userRole', result.data.role);
+          localStorage.setItem("userRole", result.data.role);
           // You can redirect based on role or update state
           setUserRole(result.data.role);
-        } 
+        }
         // USER NOT FOUND CASE - This is NOT an error, just not registered
         else if (result.data.role === "none") {
           // console.log("User not registered as student");
-          setRoleStatus('not_registered');
+          setRoleStatus("not_registered");
           // You can redirect to registration page or show registration form
         }
-        
       } catch (error) {
         // This will only catch actual errors (network issues, server down, etc.)
         // console.error("Error finding role:", error);
-        setRoleStatus('error');
+        setRoleStatus("error");
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     findRole();
   }, [userData]);
 
   // Show loading state only when Clerk is loading OR when we're fetching role
   if (!isLoaded || (userData.id && isLoading)) {
-    return (
-      <Loading/>
-    );
+    return <Loading />;
   }
 
   return (
@@ -89,7 +86,7 @@ const Home = () => {
     >
       <div className="max-w-3xl text-center">
         {/* Show status messages */}
-        {roleStatus === 'not_registered' && (
+        {roleStatus === "not_registered" && (
           <motion.div
             className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4"
             initial={{ opacity: 0, y: -20 }}
@@ -99,7 +96,7 @@ const Home = () => {
           </motion.div>
         )}
 
-        {roleStatus === 'error' && (
+        {roleStatus === "error" && (
           <motion.div
             className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
             initial={{ opacity: 0, y: -20 }}
