@@ -13,7 +13,7 @@ const Home = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [userRole, setUserRole] = useState("");
-  const [roleStatus, setRoleStatus] = useState(""); // 'not_registered', 'error', ''
+  const [roleStatus, setRoleStatus] = useState("");
 
   const { isLoaded, user } = useUser();
 
@@ -36,32 +36,19 @@ const Home = () => {
     const findRole = async () => {
       setIsLoading(true);
       try {
-        // console.log("Sending request to backend with data:", userData);
-
         const result = await axios.post(
           "http://localhost:8080/api/findrole",
           userData
         );
 
-        // console.log("Role response:", result.data);
-
-        // SUCCESS CASE - User found in database
         if (result.data.role && result.data.role !== "none") {
-          // console.log("User role found:", result.data.role);
-          // Store the role in context/state/localStorage for later use
           localStorage.setItem("userRole", result.data.role);
-          // You can redirect based on role or update state
+
           setUserRole(result.data.role);
-        }
-        // USER NOT FOUND CASE - This is NOT an error, just not registered
-        else if (result.data.role === "none") {
-          // console.log("User not registered as student");
+        } else if (result.data.role === "none") {
           setRoleStatus("not_registered");
-          // You can redirect to registration page or show registration form
         }
       } catch (error) {
-        // This will only catch actual errors (network issues, server down, etc.)
-        // console.error("Error finding role:", error);
         setRoleStatus("error");
       } finally {
         setIsLoading(false);
@@ -106,13 +93,13 @@ const Home = () => {
           </motion.div>
         )}
 
-        {userRole && (
+        {user?.fullName && (
           <motion.div
             className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            Welcome! Your role: {userRole}
+            Welcome {user?.fullName}
           </motion.div>
         )}
 
